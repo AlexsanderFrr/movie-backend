@@ -4,6 +4,8 @@ const router = express.Router();
 //vamos carregar nosso modelo
 const Users = require("../models/Users");
 
+//Rota para autentication
+
 // Rota para criar um novo perfil
 router.post('/add', async (req, res) => {
     try {
