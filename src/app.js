@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 
 const rotaUsers = require('./routes/rotaUsers');
-const rotaPosts = require('./routes/rotaPosts');
 const rotaMovies = require('./routes/rotaMovies');
 const rotaGenres = require('./routes/rotaGenres');
 const rotaMovies_genres = require('./routes/rotaMovies_genres');
@@ -16,7 +15,6 @@ app.use(express.json());
 
 //Remanejando Rotas de Users
 app.use('/rota-users', rotaUsers);
-app.use('/rota-posts', rotaPosts);
 app.use('/rota-movies', rotaMovies);
 app.use('/rota-genres', rotaGenres);
 app.use('/rota-movies-genres', rotaMovies_genres);
