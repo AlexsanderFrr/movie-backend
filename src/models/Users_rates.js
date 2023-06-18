@@ -1,7 +1,7 @@
 const db = require('./db');
 
 const Users_rates = db.sequelize.define('Users_rates', {
-  id_users_rates: {
+  id_user_rate: {
     type: db.Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
@@ -13,9 +13,9 @@ const Users_rates = db.sequelize.define('Users_rates', {
   data_rate: {
     type: db.Sequelize.DATE
   },
-  id_movies: {
+  id_movie: {
     type: db.Sequelize.INTEGER,
-    references: { model: 'Movies', key: 'id_movies' },
+    references: { model: 'Movies', key: 'id_movie' },
     onDelete: 'CASCADE',
     allowNull: false,
 },

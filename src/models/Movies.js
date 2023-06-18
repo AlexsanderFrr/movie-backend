@@ -1,7 +1,7 @@
 const db = require('./db');
 
 const Movies = db.sequelize.define('Movies', {
-  id_movies: {
+  id_movie: {
     type: db.Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
