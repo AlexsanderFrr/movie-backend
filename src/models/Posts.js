@@ -19,7 +19,7 @@ const Posts = db.sequelize.define('Posts', {
   categoria: {
     type: db.Sequelize.STRING
   },
-  calassificacao: {
+  classificacao: {
     type: db.Sequelize.FLOAT
   }
 

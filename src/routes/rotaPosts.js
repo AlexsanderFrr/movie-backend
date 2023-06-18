@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // Rota para criar um novo filme
-router.post('/', async (req, res) => {
+router.post('/add', async (req, res) => {
   const { titulo, imagem, texto, categoria, classificacao } = req.body;
   try {
     const posts = await Posts.create({ titulo, imagem, texto, categoria, classificacao });
