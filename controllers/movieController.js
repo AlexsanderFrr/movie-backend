@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { Op } = require('sequelize');
 
 //pegamos a entidade em si dessa forma usando .Genres
 const Movies = require('../models').Movies;
@@ -20,6 +21,38 @@ router.get('/all', async (req, res) => {
     try {
         const movies = await Movies.findAll();
         res.status(200).json(movies);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//Busca Por id do Filme (GET)
+router.get('/:id', async (req, res) => {
+    try {
+        const id = req.params;
+        const movie = await Movies.findByPk(req.params.id);
+        res.status(200).json(movie);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//Rota para buscar um filme através do titulo
+router.get('/title/:title', async (req, res) => {
+    const { title } = req.params;
+    try {
+        const movie = await Movies.findAll({
+            where: {
+                titulo: {
+                    [Op.like]: `%${title}%` // Usando o operador LIKE com o Sequelize
+                }
+            }
+        });
+        if (movie.length > 0) {
+            res.json(movie);
+        } else {
+            throw new Error('Nenhum filme encontrado com o título fornecido');
+        }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

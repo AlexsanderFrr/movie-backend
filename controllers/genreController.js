@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { Op } = require('sequelize');
 
 //pegamos a entidade em si dessa forma usando .Genres
 const Genres = require('../models').Genres;
@@ -24,6 +25,39 @@ router.get('/all', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
+//Busca Por id a Gêneros (GET)
+router.get('/:id', async (req, res) => {
+    try {
+        const id = req.params;
+        const genre = await Genres.findByPk(req.params.id);
+        res.status(200).json(genre);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//Rota para buscar um Genero através do nome
+router.get('/genre/:title', async (req, res) => {
+    const { title } = req.params;
+    try {
+        const genre = await Genres.findAll({
+            where: {
+                genre: {
+                    [Op.like]: `%${title}%` // Usando o operador LIKE com o Sequelize
+                }
+            }
+        });
+        if (genre.length > 0) {
+            res.json(genre);
+        } else {
+            throw new Error('Nenhum Genero encontrado com o texto fornecido');
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 //Alterar Gênero por ID (PUT)
 router.put('/:id', async (req, res) => {
