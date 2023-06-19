@@ -11,6 +11,8 @@ const port = 8081;
 const genres = require('./controllers/genreController.js');
 const movies = require('./controllers/movieController.js');
 const users = require('./controllers/userController.js');
+const moviesGenres = require('./controllers/movieGenreController.js');
+const usersRates = require('./controllers/userRateController.js');
 
 //Rotas
 app.use(bodyParser.json());
@@ -22,5 +24,7 @@ app.get('/', (req, res) => res.send('HELLO WORLD, ROTA OK'))
 app.use('/rota-genres', genres);
 app.use('/rota-movies', movies);
 app.use('/rota-users', users);
+app.use('/rota-movies-genres', moviesGenres);
+app.use('/rota-users-rates', usersRates);
 
 app.listen(port, () => console.log(`Servidor rodando porta ${port}!`))

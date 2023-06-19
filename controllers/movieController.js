@@ -5,6 +5,8 @@ const { Op } = require('sequelize');
 //pegamos a entidade em si dessa forma usando .Genres
 const Movies = require('../models').Movies;
 
+
+
 //Cadastra Filme (POST)
 router.post('/add', async (req, res) => {
     try {
