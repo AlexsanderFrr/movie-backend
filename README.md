@@ -55,12 +55,12 @@ A estrutura do projeto é organizada da seguinte forma:
 ```
 javaCopy code├── app.js
 
-├── routes
-│   ├── rotaUsers.js
-│   ├── rotaMovies.js
-│   ├── rotaGenres.js
-│   ├── rotaMovies_genres.js
-│   └── rotaUsers_rates.js
+├── Controllers
+│   ├── usersController.js
+│   ├── moviesController.js
+│   ├── genresController.js
+│   ├── movies_genresController.js
+│   └── msers_rateControllers.js
 ├── models
 │   └── dbs.js
 │   └── Genres.js
