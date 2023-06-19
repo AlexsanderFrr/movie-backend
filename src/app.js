@@ -1,7 +1,18 @@
 const express = require('express');
+const cors = require('cors');
 
 //Criar o app
 const app = express();
+
+// app.use((req, res, next) => {
+//     header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+//     header("Access-Control-Allow-Methods", "POST, GET, PUT");
+//     app.use(cors());
+//     next();
+// });
+app.use(cors({
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+}));
 
 const rotaUsers = require('./routes/rotaUsers');
 const rotaMovies = require('./routes/rotaMovies');
@@ -19,6 +30,7 @@ app.use('/rota-movies', rotaMovies);
 app.use('/rota-genres', rotaGenres);
 app.use('/rota-movies-genres', rotaMovies_genres);
 app.use('/rota-users-rates', rotaUsers_rates);
+
 
 // Rotas e controladores do Sequelize virão aqui
 

@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-
+const cors = require('cors');
 
 //vamos carregar nosso modelo
 const Users = require("../models/Users");
 
 //Rota para authentication
 // Endpoint de autenticação
-router.post('/auth', async (req, res) => {
+router.post('/auth', cors(), async (req, res) => {
     const { email, pwd } = req.body;
 
     try {
