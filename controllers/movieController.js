@@ -1,17 +1,34 @@
 const express = require('express');
-const router = express.Router();
+const multer = require('multer');
 const { Op } = require('sequelize');
+const router = express.Router();
+const randomNumber = Math.floor(Math.random() * 1000000);
+const timestamp = new Date().getTime();
 
-//pegamos a entidade em si dessa forma usando .Genres
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads'); 
+  },
+  filename: function (req, file, cb) {
+    // Adiciona um identificador único no início do nome do arquivo
+    const uniqueIdentifier = `${timestamp}_${randomNumber}_`;
+    const newFileName = uniqueIdentifier + file.originalname;
+    cb(null, newFileName);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 const Movies = require('../models').Movies;
 
-
-
-//Cadastra Filme (POST)
-router.post('/add', async (req, res) => {
+// Adicionar filme
+router.post('/add', upload.single('imagem'), async (req, res) => {
     try {
-        const { titulo, imagem, sinopse, rate_avg, data_lancamento } = req.body;
-        const newEdit = await Movies.create({ titulo, imagem, sinopse, rate_avg, data_lancamento })
+        const { titulo, sinopse, data_lancamento } = req.body;
+
+        // Use o novo nome do arquivo que inclui o identificador único
+        const newEdit = await Movies.create({ titulo, sinopse, data_lancamento, imagem: req.file.filename });
+
         res.status(200).json({ message: 'Filme Cadastrado com sucesso' });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -22,11 +39,26 @@ router.post('/add', async (req, res) => {
 router.get('/all', async (req, res) => {
     try {
         const movies = await Movies.findAll();
-        res.status(200).json(movies);
+
+        const moviesWithImagePaths = movies.map(movie => {
+            if (movie.imagem) {
+                const imagePath = `/img/${movie.imagem}`;
+                return {
+                    ...movie.dataValues,
+                    imagem: imagePath,
+                };
+            } else {
+                return { ...movie.dataValues, imagem: null };
+            }
+        });
+
+        res.status(200).json(moviesWithImagePaths);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: 'Erro interno no servidor' });
     }
 });
+
 
 //Busca Por id do Filme (GET)
 router.get('/:id', async (req, res) => {
