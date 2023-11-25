@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 const Movies = require('../models').Movies;
 
@@ -60,30 +60,52 @@ router.get('/all', async (req, res) => {
 });
 
 
-//Busca Por id do Filme (GET)
+// Busca Por id do Filme (GET)
 router.get('/:id', async (req, res) => {
     try {
-        const id = req.params;
-        const movie = await Movies.findByPk(req.params.id);
-        res.status(200).json(movie);
+        const id = req.params.id;
+        const movie = await Movies.findByPk(id);
+
+        if (!movie) {
+            throw new Error('Filme não encontrado');
+        }
+
+        const imagePath = movie.imagem ? `/img/${movie.imagem}` : null;
+
+        const movieWithImagePath = {
+            ...movie.dataValues,
+            imagem: imagePath,
+        };
+
+        res.status(200).json(movieWithImagePath);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-//Rota para buscar um filme através do titulo
-router.get('/title/:title', async (req, res) => {
-    const { title } = req.params;
+// Rota para buscar um filme através do título
+router.get('/title', async (req, res) => {
+    const { title } = req.query; // Obtenha o título da consulta
+
     try {
-        const movie = await Movies.findAll({
+        const movies = await Movies.findAll({
             where: {
                 titulo: {
-                    [Op.like]: `%${title}%` // Usando o operador LIKE com o Sequelize
+                    [Op.like]: `%${title}%`
                 }
             }
         });
-        if (movie.length > 0) {
-            res.json(movie);
+
+        const moviesWithImagePaths = movies.map(movie => {
+            const imagePath = movie.imagem ? `/img/${movie.imagem}` : null;
+            return {
+                ...movie.dataValues,
+                imagem: imagePath,
+            };
+        });
+
+        if (moviesWithImagePaths.length > 0) {
+            res.json(moviesWithImagePaths);
         } else {
             throw new Error('Nenhum filme encontrado com o título fornecido');
         }
@@ -92,16 +114,22 @@ router.get('/title/:title', async (req, res) => {
     }
 });
 
-//Alterar Filme por ID (PUT)
-router.put('/:id', async (req, res) => {
+
+// Alterar Filme por ID (PUT)
+router.put('/:id', upload.single('imagem'), async (req, res) => {
     try {
-        const { titulo, imagem, sinopse, rate_avg, data_lancamento } = req.body;
+        const { titulo, sinopse, data_lancamento } = req.body;
+
+        // Use o novo nome do arquivo que inclui o identificador único
+        const imagem = req.file ? req.file.filename : undefined;
+
         await Movies.update(
-            { titulo, imagem, sinopse, rate_avg, data_lancamento },
+            { titulo, sinopse, data_lancamento, imagem },
             {
                 where: { id: req.params.id },
             }
         );
+
         res.status(200).json({ message: 'Filme Atualizado com sucesso' });
     } catch (error) {
         res.status(400).json({ error: error.message });
